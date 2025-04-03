@@ -56,19 +56,22 @@ export const deleteStudent = createAsyncThunk(
 
 export const enrollInCourse = createAsyncThunk(
   "students/enrollInCourse",
-  async ({
-    studentId,
-    courseId,
-  }: {
-    studentId: number;
-    courseId: number;
-    status?: string;
-  }) => {
-    const res = await studentService.enrollInCourse({
-      studentId,
-      courseId,
-    });
-    return res.data;
+  async (
+    { studentId, courseId }: { studentId: number; courseId: number },
+    { rejectWithValue }
+  ) => {
+    try {
+      const res = await studentService.enrollInCourse({ studentId, courseId });
+      return res.data;
+    } catch (err: unknown) {
+      if (err && typeof err === "object" && "response" in err) {
+        const errorResponse = err.response as { data?: { message?: string } };
+        return rejectWithValue(
+          errorResponse?.data?.message || "Enrollment failed"
+        );
+      }
+      return rejectWithValue("Enrollment failed");
+    }
   }
 );
 
@@ -86,10 +89,12 @@ const studentSlice = createSlice({
       .addCase(fetchStudents.pending, (state) => {
         state.loading = true;
       })
+
       .addCase(fetchStudents.fulfilled, (state, action) => {
         state.students = action.payload;
         state.loading = false;
       })
+
       .addCase(fetchStudents.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
@@ -127,6 +132,11 @@ const studentSlice = createSlice({
         ) {
           state.selectedStudent.courses = action.payload.courses;
         }
+      })
+
+      .addCase(enrollInCourse.rejected, (state, action) => {
+        state.error = (action.payload as string) || "Enrollment failed";
+        state.loading = false;
       });
   },
 });

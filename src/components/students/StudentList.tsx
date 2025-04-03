@@ -74,6 +74,7 @@ const StudentList: React.FC = () => {
               <th className="p-2">ID</th>
               <th className="p-2">First Name</th>
               <th className="p-2">Last Name</th>
+              <th className="p-2">Courses</th>
               <th className="p-2">Actions</th>
             </tr>
           </thead>
@@ -83,8 +84,15 @@ const StudentList: React.FC = () => {
                 <td className="p-2">{st.id}</td>
                 <td className="p-2">{st.firstName}</td>
                 <td className="p-2">{st.lastName}</td>
-                <td className="p-2">
-                  <div className="flex gap-2">
+                <td className="p-2 text-sm text-gray-200">
+                  {st.courses && st.courses.length > 0 ? (
+                    st.courses.map((c) => c.title).join(", ")
+                  ) : (
+                    <span className="italic text-gray-500">No courses</span>
+                  )}
+                </td>
+                <td className="p-2 align-middle">
+                  <div className="flex items-center justify-center gap-x-3">
                     <Link
                       to={`/students/${st.id}`}
                       className="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded hover:bg-blue-600"

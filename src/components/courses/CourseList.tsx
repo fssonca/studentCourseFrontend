@@ -75,6 +75,7 @@ const CourseList: React.FC = () => {
               <th className="p-2">ID</th>
               <th className="p-2">Code</th>
               <th className="p-2">Title</th>
+              <th className="p-2">Students</th>
               <th className="p-2">Actions</th>
             </tr>
           </thead>
@@ -84,6 +85,21 @@ const CourseList: React.FC = () => {
                 <td className="p-2">{course.id}</td>
                 <td className="p-2">{course.code}</td>
                 <td className="p-2">{course.title}</td>
+                <td className="p-2 text-sm text-gray-200">
+                  {course.students && course.students.length > 0 ? (
+                    course.students
+                      .slice()
+                      .sort((a, b) => // sort alphabetically
+                        (a.firstName + a.lastName).localeCompare(
+                          b.firstName + b.lastName
+                        )
+                      )
+                      .map((s) => `${s.firstName} ${s.lastName}`)
+                      .join(", ")
+                  ) : (
+                    <span className="italic text-gray-500">No students</span>
+                  )}
+                </td>
                 <td className="p-2 align-middle">
                   <div className="flex items-center justify-center gap-x-3">
                     <Link
